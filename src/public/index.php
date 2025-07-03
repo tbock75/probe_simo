@@ -1,9 +1,11 @@
 <?php
     require_once __DIR__ . '/../Services/DatabaseService.php';
     require_once __DIR__ . '/../Model/Guestbook.php';
+    require_once __DIR__ . '/../Handlers/RequestHandler.php';
 
     use App\Services\DatabaseService;
     use App\Model\Guestbook;
+    use App\Handlers\RequestHandler;
 
     session_start();
 
@@ -12,8 +14,10 @@
     $guestbook = new Guestbook($db);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        error_reporting(E_ALL);
-        if ($guestbook->addEntry($_POST)) {
+        $requestHandler = new RequestHandler();
+        $requestHandler->sanitize($_POST);
+        $requestData = $requestHandler->all();
+        if ($guestbook->addEntry($requestData)) {
             $success = "Eintrag wurde erfolgreich hinzugefügt!";
         } else {
             $error = "Es gab einen Fehler beim Hinzufügen des Eintrags.<br />";
@@ -25,7 +29,7 @@
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <title>Gästebuch</title>
     <style>
