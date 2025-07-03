@@ -69,29 +69,29 @@ use App\Model\Guestbook;
         <?php if (isset($error)): ?>
             <div style="color: red;"><?php echo $error; ?></div>
         <?php endif; ?>
-    <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
+        <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
 
-    <h1>Admin</h1>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Admin:</h5>
-            <?php foreach ($entries as $entry): ?>
-                <div class="entry">
-                    <strong><?php echo htmlspecialchars($entry['name']); ?></strong>
-                    <p>
-                        <?php echo nl2br(htmlspecialchars($entry['message'])); ?></p>
-                    <small>
-                        Email: <?php echo htmlspecialchars($entry['email']); ?><br>
-                        Datum: <?php echo htmlspecialchars($entry['created_at']); ?>
-                    </small>
+        <h1>Admin</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Admin:</h5>
+                <?php foreach ($entries as $entry): ?>
+                    <div class="entry">
+                        <strong><?php echo htmlspecialchars($entry['name']); ?></strong>
+                        <p>
+                            <?php echo nl2br(htmlspecialchars($entry['message'])); ?></p>
+                        <small>
+                            Email: <?php echo htmlspecialchars($entry['email']); ?><br>
+                            Datum: <?php echo htmlspecialchars($entry['created_at']); ?>
+                        </small>
 
-                    <small>
-                        <a href="?delete=<?php echo $entry['id']; ?>">del</a>
-                    </small>
-                </div>
-            <?php endforeach; ?>
+                        <small>
+                            <a href="?delete=<?php echo $entry['id']; ?>">del</a>
+                        </small>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </div>
     <?php else: ?>
         <h1>Login:</h1>
         <div class="card-body">

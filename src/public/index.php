@@ -12,16 +12,19 @@
     $database = new DatabaseService();
     $db = $database->connect();
     $guestbook = new Guestbook($db);
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $requestHandler = new RequestHandler();
         $requestHandler->sanitize($_POST);
-        $requestData = $requestHandler->all();
-        if ($guestbook->addEntry($requestData)) {
-            $success = "Eintrag wurde erfolgreich hinzugefügt!";
+        if(!$requestHandler->hasErrors()) {
+            $requestData = $requestHandler->all();
+            if ($guestbook->addEntry($requestData)) {
+                $success = "Eintrag wurde erfolgreich hinzugefügt!";
+            } else {
+                $error = "Es gab einen Fehler beim Hinzufügen des Eintrags.<br />";
+                $error .= "Fehler: " . $guestbook->getErrorMessage();
+            }
         } else {
-            $error = "Es gab einen Fehler beim Hinzufügen des Eintrags.<br />";
-            $error .= "Fehler: " . $guestbook->getErrorMessage();
+            $error = implode('<br />', $requestHandler->getErrors());
         }
     }
 

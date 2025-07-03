@@ -16,21 +16,26 @@ class RequestHandler
      */
     private array $errors = [];
 
+    private array|bool $required;
+
+    public function __construct(array|bool $required = false)
+    {
+        $this->required = $required;
+    }
     /**
      * Sanatizes and validates values
      *
-     * @param array $input Rohe Eingabedaten (z.B. $_POST)
-     * @return self
+     * @param array $input
      */
-    public function sanitize(array $input): self
+    public function sanitize(array $input): void
     {
         foreach ($input as $key => $value) {
-            if($key === 'email') {
+            if($key === 'email' && $this->validateEmail($value) === false) {
                 $this->errors[] = "Wert ist keine gültige E-Mail-Adresse";
             }
             $this->sanitizedInput[$key] = $this->sanitizeValue($value);
+            $this->validateRequired($key, $value);
         }
-        return $this;
     }
 
     /**
@@ -68,22 +73,24 @@ class RequestHandler
     }
 
     /**
-     * Prüft ob ein Pflichtfeld ausgefüllt wurde
+     * tests all required variables if they are empty
      *
      * @param string $field
      * @return bool
      */
-    public function validateRequired(string $field): bool
+    public function validateRequired(string $field, string $value): bool
     {
-        if (empty($this->sanitizedInput[$field])) {
-            $this->errors[] = "Das Feld '{$field}' ist erforderlich";
-            return false;
+        if($this->required !== false) {
+            if (in_array($field, $this->required) && empty($value)) {
+                $this->errors[] = "Das Feld '{$field}' ist erforderlich.";
+                return false;
+            }
         }
         return true;
     }
 
     /**
-     * Gibt einen gereinigten Wert zurück
+     * Returns one specific value
      *
      * @param string $key
      * @return string|null
@@ -94,7 +101,7 @@ class RequestHandler
     }
 
     /**
-     * Gibt alle gereinigten Werte zurück
+     * Returns all sanitized variables
      *
      * @return array
      */
@@ -104,7 +111,8 @@ class RequestHandler
     }
 
     /**
-     * Prüft ob Fehler vorliegen
+     * tests if there are any errors
+     * returns true in case of errors
      *
      * @return bool
      */
@@ -114,7 +122,7 @@ class RequestHandler
     }
 
     /**
-     * Gibt alle Fehlermeldungen zurück
+     * return all error messages
      *
      * @return array
      */
