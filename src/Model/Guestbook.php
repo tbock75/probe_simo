@@ -32,6 +32,7 @@ class Guestbook {
                     $this->setErrorMessage('Field: ' . $key . ' ist erforderlich!');
                 }
             }
+
             return true;
         } catch(Exception $e) {
             return false;
@@ -43,11 +44,11 @@ class Guestbook {
     {
         if($this->checkRequiredFields($requestData)) {
             $query = "
-            INSERT INTO 
-                guestbook (name, email, message) 
-            VALUES 
-                (:name, :email, :message);
-        ";
+                INSERT INTO 
+                    guestbook (name, email, message) 
+                VALUES 
+                    (:name, :email, :message);
+            ";
             $stmt = $this->conn->prepare($query);
 
             $stmt->bindParam(':name', $requestData['name']);

@@ -82,12 +82,12 @@
 <?php else: ?>
     <?php foreach ($entries as $entry): ?>
         <div class="entry">
-            <strong><?php echo $entry['name']; ?></strong>
+            <strong><?php echo htmlspecialchars($entry['name']); ?></strong>
             <p>
-                <?php echo $entry['message']; ?></p>
+                <?php echo nl2br(htmlspecialchars($entry['message'])); ?></p>
             <small>
-                Email: <?php echo $entry['email']; ?><br>
-                Datum: <?php echo $entry['created_at']; ?>
+                Email: <?php echo htmlspecialchars($entry['email']); ?><br>
+                Datum: <?php echo htmlspecialchars($entry['created_at']); ?>
             </small>
         </div>
     <?php endforeach; ?>
