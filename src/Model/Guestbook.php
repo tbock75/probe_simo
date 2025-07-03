@@ -8,16 +8,28 @@ use \Exception;
 class Guestbook {
     private $conn;
 
+    private string $errorMessage = '';
+
     private $requiredFields = ['name', 'email', 'message'];
     public function __construct($db) {
         $this->conn = $db;
+    }
+
+    public function getErrorMessage(): string
+    {
+        return $this->errorMessage;
+    }
+
+    public function setErrorMessage(string $errorMessage): void
+    {
+        $this->errorMessage = $errorMessage;
     }
 
     private function checkRequiredFields($requestData) {
         try {
             foreach ($requestData as $key => $field) {
                 if(in_array($key, $this->requiredFields) && empty($field)) {
-                    throw new Exception('Field: ' . $key . ' ist erforderlich!');
+                    $this->setErrorMessage('Field: ' . $key . ' ist erforderlich!');
                 }
             }
             return true;
@@ -65,6 +77,24 @@ class Guestbook {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return false;
+        }
+    }
+
+    public function deleteEntry($id): bool
+    {
+        if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {
+        $query = "delete from guestbook where id = :id";
+        try {
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            $this->errorMessage = $e->getMessage();
+            return false;
+        }
+        } else {
+            $this->errorMessage = 'Sie sind nicht eingeloggt. Zugriff verweigert.';
         }
     }
 }

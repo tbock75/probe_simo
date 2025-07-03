@@ -5,16 +5,19 @@
     use App\Services\DatabaseService;
     use App\Model\Guestbook;
 
+    session_start();
+
     $database = new DatabaseService();
     $db = $database->connect();
     $guestbook = new Guestbook($db);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        error_reporting(E_ALL);
         if ($guestbook->addEntry($_POST)) {
             $success = "Eintrag wurde erfolgreich hinzugefügt!";
         } else {
             $error = "Es gab einen Fehler beim Hinzufügen des Eintrags.<br />";
-            $error .= "Fehler: " . error_get_last();
+            $error .= "Fehler: " . $guestbook->getErrorMessage();
         }
     }
 
@@ -89,6 +92,9 @@
         </div>
     <?php endforeach; ?>
 <?php endif; ?>
+            <div class="row ml-2 d-inline p-absolute" style="right: 200px;">
+                <a href="admin.php" class="btn btn-primary">Admin</a>
+            </div>
     </div>
 </div>
 </body>
