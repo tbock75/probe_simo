@@ -1,0 +1,95 @@
+<?php
+    require_once __DIR__ . '/../Services/DatabaseService.php';
+    require_once __DIR__ . '/../Model/Guestbook.php';
+
+    use App\Services\DatabaseService;
+    use App\Model\Guestbook;
+
+    $database = new DatabaseService();
+    $db = $database->connect();
+    $guestbook = new Guestbook($db);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($guestbook->addEntry($_POST)) {
+            $success = "Eintrag wurde erfolgreich hinzugefügt!";
+        } else {
+            $error = "Es gab einen Fehler beim Hinzufügen des Eintrags.<br />";
+            $error .= "Fehler: " . error_get_last();
+        }
+    }
+
+    $entries = $guestbook->getEntries();
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gästebuch</title>
+    <style>
+        .entry {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container p-2">
+    <h1>Gästebuch</h1>
+
+<?php if (isset($success)): ?>
+    <div style="color: green;"><?php echo $success; ?></div>
+<?php endif; ?>
+
+<?php if (isset($error)): ?>
+    <div style="color: red;"><?php echo $error; ?></div>
+<?php endif; ?>
+    <div class="card p-2">
+        <form method="post">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input id="name" type="text" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-Mail:</label>
+                <input id="email" type="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Nachricht:</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+
+            <button type="submit">Eintrag hinzufügen</button>
+        </form>
+    </div>
+
+    <div class="card p-2">
+<h2>Einträge</h2>
+<?php if(count($entries) === 0): ?>
+    <div class="entry">
+        <strong>Keine Einträge vorhanden.</strong>
+    </div>
+<?php else: ?>
+    <?php foreach ($entries as $entry): ?>
+        <div class="entry">
+            <strong><?php echo $entry['name']; ?></strong>
+            <p>
+                <?php echo $entry['message']; ?></p>
+            <small>
+                Email: <?php echo $entry['email']; ?><br>
+                Datum: <?php echo $entry['created_at']; ?>
+            </small>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
+    </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Model;
+
+use \PDO;
+use \Exception;
+
 class Guestbook {
     private $conn;
 
@@ -12,12 +16,12 @@ class Guestbook {
     private function checkRequiredFields($requestData) {
         try {
             foreach ($requestData as $key => $field) {
-                if(in_array($key, $this->requiredFields) && empty($requestData[$field])) {
-                    throw new \Exception('Field: ' . $key . ' ist erforderlich!');
+                if(in_array($key, $this->requiredFields) && empty($field)) {
+                    throw new Exception('Field: ' . $key . ' ist erforderlich!');
                 }
             }
             return true;
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             return false;
         }
 
@@ -34,9 +38,9 @@ class Guestbook {
         ";
             $stmt = $this->conn->prepare($query);
 
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':message', $message);
+            $stmt->bindParam(':name', $requestData['name']);
+            $stmt->bindParam(':email', $requestData['email']);
+            $stmt->bindParam(':message', $requestData['message']);
 
             if($stmt->execute()) {
                 return true;
@@ -48,15 +52,19 @@ class Guestbook {
 
     }
 
-    public function getEntries(): array
+    public function getEntries(): array|bool
     {
-        $query = "
+        try {
+            $query = "
             SELECT * 
                 FROM guestbook 
                     ORDER BY created_at DESC
         ";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }
