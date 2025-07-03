@@ -83,18 +83,19 @@ class Guestbook {
     public function deleteEntry($id): bool
     {
         if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {
-        $query = "delete from guestbook where id = :id";
-        try {
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
-            return true;
-        } catch (Exception $e) {
-            $this->errorMessage = $e->getMessage();
-            return false;
-        }
+            $query = "delete from guestbook where id = :id";
+            try {
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->errorMessage = $e->getMessage();
+                return false;
+            }
         } else {
             $this->errorMessage = 'Sie sind nicht eingeloggt. Zugriff verweigert.';
+            return false;
         }
     }
 }
