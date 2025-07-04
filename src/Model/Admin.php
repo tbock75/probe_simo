@@ -4,11 +4,26 @@ namespace App\Model;
 
 class Admin
 {
+    /**
+     * @var
+     */
     private $conn;
+
+    /**
+     * @param $db
+     */
     public function __construct($db)
     {
         $this->conn = $db;
     }
+
+    /**
+     * Verify if user data is correct and verify as admin
+     *
+     * @param $username
+     * @param $password
+     * @return bool
+     */
     public function verifyAdmin($username, $password)
     {
         $query = "
@@ -33,7 +48,13 @@ class Admin
     }
 
 
-
+    /**
+     * Create Session members
+     *
+     * @param $username
+     * @param $email
+     * @return void
+     */
     private function createAdminSession($username, $email)
     {
         $_SESSION['is_admin'] = true;

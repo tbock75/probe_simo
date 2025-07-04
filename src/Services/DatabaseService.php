@@ -6,12 +6,36 @@ use PDOException;
 
 class DatabaseService
 {
+    /**
+     * @var string
+     */
     private $host = 'localhost';
+
+    /**
+     * @var string
+     */
     private $dbname = 'guestbook_db';
+
+    /**
+     * @var string
+     */
     private $username = 'root';
+
+    /**
+     * @var string
+     */
     private $password = '';
+
+    /**
+     * @var
+     */
     private $conn;
 
+    /**
+     * Creates a connection to the database
+     *
+     * @return PDO|void
+     */
     public function connect() {
         try {
             $this->conn = new PDO(

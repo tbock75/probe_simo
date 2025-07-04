@@ -6,25 +6,55 @@ use \PDO;
 use \Exception;
 
 class Guestbook {
+    /**
+     * @var
+     */
     private $conn;
 
+    /**
+     * @var string
+     */
     private string $errorMessage = '';
 
+    /**
+     * @var string[]
+     */
     private $requiredFields = ['name', 'email', 'message'];
+
+    /**
+     * @param $db
+     */
     public function __construct($db) {
         $this->conn = $db;
     }
 
+    /**
+     * Returns the generated error message
+     *
+     * @return string
+     */
     public function getErrorMessage(): string
     {
         return $this->errorMessage;
     }
 
+    /**
+     * Sets the error message
+     *
+     * @param string $errorMessage
+     * @return void
+     */
     public function setErrorMessage(string $errorMessage): void
     {
         $this->errorMessage = $errorMessage;
     }
 
+    /**
+     * Checks all required fields
+     *
+     * @param $requestData
+     * @return bool
+     */
     private function checkRequiredFields($requestData) {
         try {
             foreach ($requestData as $key => $field) {
@@ -40,6 +70,12 @@ class Guestbook {
 
     }
 
+    /**
+     * Adds an entry after verifying the data
+     *
+     * @param $requestData
+     * @return bool
+     */
     public function addEntry($requestData): bool
     {
         if($this->checkRequiredFields($requestData)) {
@@ -65,6 +101,11 @@ class Guestbook {
 
     }
 
+    /**
+     * Returns all guestbook entries
+     *
+     * @return array|bool
+     */
     public function getEntries(): array|bool
     {
         try {
@@ -81,6 +122,10 @@ class Guestbook {
         }
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function deleteEntry($id): bool
     {
         if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {

@@ -6,12 +6,14 @@ class RequestHandler
 {
     /**
      * This is were all sanitized values ARE STORED
+     *
      * @var array
      */
     private array $sanitizedInput = [];
 
     /**
      * Error Messages
+     *
      * @var array
      */
     private array $errors = [];
@@ -39,7 +41,7 @@ class RequestHandler
     }
 
     /**
-     * Reinigt einen einzelnen Eingabewert
+     * Sanitaizes strings for especially xss safety
      *
      * @param mixed $value Der zu reinigende Wert
      * @return string
@@ -58,7 +60,7 @@ class RequestHandler
     }
 
     /**
-     * Validiert eine E-Mail-Adresse
+     * Validates a string for an allowed email address
      *
      * @param string $email
      * @return bool
